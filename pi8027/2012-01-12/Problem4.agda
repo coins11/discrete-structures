@@ -1,4 +1,6 @@
 
+-- 離散構造 第二章「集合」 演習問題4
+
 module Problem4 where
 
 open import Level
@@ -9,14 +11,17 @@ open import Relation.Binary
 open import Relation.Unary
 open import Relation.Nullary
 
+complement : ∀ {ℓ} {U : Set ℓ} → Pred U ℓ → Pred U ℓ
+complement A a = ¬ A a
+
 _-_ : ∀ {ℓ} {U : Set ℓ} → (A B : Pred U ℓ) → Pred U ℓ
-A - B = λ a → (A a) × ¬ (B a)
+A - B = A ∩ complement B
 
 _▵_ : ∀ {ℓ} {U : Set ℓ} → (A B : Pred U ℓ) → Pred U ℓ
 A ▵ B = (A - B) ∪ (B - A)
 
 _▵′_ : ∀ {ℓ} {U : Set ℓ} → (A B : Pred U ℓ) → Pred U ℓ
-A ▵′ B = (A ∩ (λ a → ¬ B a)) ∪ ((λ a → ¬ A a) ∩ B)
+A ▵′ B = (A ∩ complement B) ∪ (complement A ∩ B)
 
 _≡P_ : ∀ {ℓ} {U : Set ℓ} → (A B : Pred U ℓ) → Set _
 A ≡P B = A ⊆ B × B ⊆ A
@@ -28,7 +33,7 @@ A ≡P B = A ⊆ B × B ⊆ A
 ≡Psym (p1 , p2) = p2 , p1
 
 ≡Ptrans : ∀ {c} {U : Set c} → Transitive (_≡P_ {c} {U})
-≡Ptrans (p1 , p2) (p3 , p4) = (λ p → p3 (p1 p)) , (λ p → p2 (p4 p))
+≡Ptrans (p1 , p2) (p3 , p4) = (p3 ∘ p1) , (p2 ∘ p4)
 
 ≡PisEquivalence : ∀ {c} {U : Set c} → IsEquivalence (_≡P_ {c} {U})
 ≡PisEquivalence {c} {U} = record
